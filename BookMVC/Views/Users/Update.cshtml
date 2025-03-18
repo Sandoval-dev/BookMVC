@@ -1,0 +1,31 @@
+﻿@model User
+
+<form class="user" method="post" action="/Users/Update">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="form-group">
+        <input type="text" class="form-control form-control-user"
+               id="name" name="name"
+               placeholder="Name" value="@Model.Name">
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control form-control-user"
+               id="surname" name="surname"
+               placeholder="Surname" value="@Model.Surname">
+    </div>
+    <div class="form-group">
+        <input type="email" class="form-control form-control-user"
+               id="email" name="email" aria-describedby="emailHelp"
+               placeholder="Email" value="@Model.Email">
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control form-control-user"
+               id="phone" name="phone"
+               placeholder="Phone" value="@Model.Phone">
+    </div>
+
+    <hr>
+    <button type="submit" class="btn btn-primary btn-user btn-block">
+        Save
+    </button>
+
+</form>

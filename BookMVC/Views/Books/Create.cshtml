@@ -1,0 +1,96 @@
+﻿@* bu sayfada kategorı alt kategıro ısllemlerını bulabılırsın *@
+<form class="user" method="post" action="/Books/Create">
+    <div class="form-group">
+        <input type="text" class="form-control form-control-user"
+               id="title" name="title"
+               placeholder="Title...">
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control form-control-user"
+               id="author" name="author"
+               placeholder="Author Name...">
+    </div>
+    <div class="form-group">
+        <input type="number" class="form-control form-control-user"
+               id="stock" name="stock"
+               placeholder="Stock...">
+    </div>
+    @*     <div class="form-group">
+    <input type="number" class="form-control form-control-user"
+    id="kategoriId" name="kategoriId"
+    placeholder="Kategori Id Giriniz...">
+    </div> *@
+
+    <div class="form-group">
+        <select class="custom-select" id="mainCategory">
+            <option value=""> Select a Main Category.</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <select class="custom-select" id="subCategory" name="categoryId">
+            <option value=""> Select a Sub Category.</option>
+        </select>
+    </div>
+
+    <hr>
+    <button type="submit" class="btn btn-primary btn-user btn-block">
+        Save
+    </button>
+
+</form>
+
+<script src="/template/vendor/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        //ust kategorileri getiren fonksiyon
+        $.ajax({
+            url: '/Categories/GetMainCategory',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var mainCategoryDropDown = $('#mainCategory');
+                mainCategoryDropDown.empty();
+                mainCategoryDropDown.append('<option selected value="0">Select a Main Category.</option>');
+                $.each(data.data, function (index, category) {
+                    mainCategoryDropDown.append($('<option value="' + category.id + '">' + category.name + '</option>'));
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log('Something went to wrong: ' + error);
+            }
+        });
+
+        //ust kategoriye gore alt kategori getiren fonksiyon
+
+        $('#mainCategory').change(function () {
+            var mainCategoryId = document.getElementById("mainCategory"); // Select elementini al
+            var mainValue = mainCategoryId.value; // Seçili değeri al
+            if (mainValue != "0") {
+                $.ajax({
+                    url: '/Categories/GetSubCategory?mainCategoryId=' + mainValue,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        var subCategoryDropwDown = $('#subCategory');
+                        var subValue = subCategoryDropwDown.value;
+                        subCategoryDropwDown.empty();
+                        subCategoryDropwDown.append('<option selected value="0">Select a Sub Category.</option>');
+
+                        $.each(data.data, function (index, subCategory) {
+                            subCategoryDropwDown.append($('<option></option>').attr('value', subCategory.id).text(subCategory.name));
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Something went to wrong: ' + error);
+                    }
+                });
+            } else {
+                $('#subCategory').empty();
+                $('#subCategory').append('<option selected value="0">Select a Sub Category.</option>');
+            }
+        });
+
+    });
+</script>

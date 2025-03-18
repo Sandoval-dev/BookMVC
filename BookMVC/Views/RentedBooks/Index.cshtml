@@ -1,0 +1,47 @@
+﻿@model List<RentedBook>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Rented Books</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            @if (Model.Count > 0)
+            {
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Book</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>###</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var rentedBook in Model)
+                        {
+                            <tr>
+                                <td>@rentedBook.User?.Name @rentedBook.User?.Surname</td>
+                                <td>@rentedBook.Book?.Title</td>
+                                <td>@rentedBook.StartDate</td>
+                                <td>@rentedBook.EndDate</td>
+                                <td>
+                                    <a href="/RentedBooks/UpdateEndDate?rentedBookId=@rentedBook.Id"> <i class="fas fa-arrow-right"></i></a>
+                                    <a href="/RentedBooks/Delete?rentedBookId=@rentedBook.Id"> <i class="fas fa-trash" style="color:red"></i></a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>We don't have rented books.</p>
+            }
+
+        </div>
+    </div>
+</div>

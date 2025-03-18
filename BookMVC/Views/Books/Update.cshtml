@@ -1,0 +1,124 @@
+﻿@model Book
+
+<form class="user" method="post" action="/Books/Update">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <input type="text" class="form-control form-control-user"
+               id="title" name="title"
+               placeholder="Enter Book Title..." value="@Model.Title">
+    </div>
+
+    <div class="form-group">
+        <input type="text" class="form-control form-control-user"
+               id="author" name="author"
+               placeholder="Enter Author Name..." value="@Model.Author">
+    </div>
+
+    <div class="form-group">
+        <input type="number" class="form-control form-control-user"
+               id="stock" name="stock"
+               placeholder="Enter Stock Amount..." value="@Model.Stock">
+    </div>
+
+    <div class="form-group">
+        <select class="custom-select" id="mainCategory">
+            <option value="">Select Main Category</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <select class="custom-select" id="subCategory" name="categoryId">
+            <option value="">Select Sub Category</option>
+        </select>
+    </div>
+
+    <hr>
+    <button type="submit" class="btn btn-primary btn-user btn-block">
+        SAVE
+    </button>
+</form>
+
+<script src="/template/vendor/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        // Fetch main categories
+        $.ajax({
+            url: '/Categories/GetMainCategory',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var mainCategoryDropdown = $('#mainCategory');
+                mainCategoryDropdown.empty();
+                mainCategoryDropdown.append('<option value="0">Select Main Category</option>');
+
+                $.each(data.data, function (index, category) {
+                    if (@ViewBag.Category == category.id) {
+                        mainCategoryDropdown.append($('<option selected value="' + category.id + '">' + category.name + '</option>'));
+                    } else {
+                        mainCategoryDropdown.append($('<option value="' + category.id + '">' + category.name + '</option>'));
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log('Error loading categories: ' + error);
+            }
+        });
+
+        // Fetch subcategories based on selected main category
+        $('#mainCategory').change(function () {
+            var mainCategoryValue = $(this).val();
+            console.log(mainCategoryValue);
+
+            if (mainCategoryValue != "0") {
+                $.ajax({
+                    url: '/Categories/GetSubCategory?mainCategoryId=' + mainCategoryValue,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        var subCategoryDropdown = $('#subCategory');
+                        subCategoryDropdown.empty();
+                        subCategoryDropdown.append('<option selected value="0">Select Sub Category</option>');
+
+                        $.each(data.data, function (index, subCategory) {
+                            subCategoryDropdown.append($('<option></option>').attr('value', subCategory.id).text(subCategory.name));
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error loading subcategories: ' + error);
+                    }
+                });
+            } else {
+                $('#subCategory').empty().append('<option selected value="0">Select Sub Category</option>');
+            }
+        });
+
+        // Load subcategories if a main category is already selected
+        var selectedMainCategory = '@ViewBag.Category';
+        var selectedSubCategory = '@Model.CategoryId';
+
+        $.ajax({
+            url: '/Categories/GetSubCategory?mainCategoryId=' + selectedMainCategory,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var subCategoryDropdown = $('#subCategory');
+                subCategoryDropdown.empty();
+                subCategoryDropdown.append('<option value="0">Select Sub Category</option>');
+
+                $.each(data.data, function (index, category) {
+                    if (@Model.CategoryId == category.id) {
+                        subCategoryDropdown.append($('<option selected value="' + category.id + '">' + category.name + '</option>'));
+                    } else {
+                        subCategoryDropdown.append($('<option value="' + category.id + '">' + category.name + '</option>'));
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log('Error loading subcategories: ' + error);
+            }
+        });
+
+    });
+</script>
