@@ -7,7 +7,7 @@
         public string Author { get; set; }
         public int Stock { get; set; }
         public int CategoryId { get; set; }
-        public Category Kategori { get; set; }
+        public Category? Kategori { get; set; }
 
     }
 }

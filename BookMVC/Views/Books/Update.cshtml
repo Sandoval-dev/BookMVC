@@ -54,7 +54,7 @@
                 mainCategoryDropdown.append('<option value="0">Select Main Category</option>');
 
                 $.each(data.data, function (index, category) {
-                    if (@ViewBag.Category == category.id) {
+                    if (@ViewBag.Kategori == category.id) {
                         mainCategoryDropdown.append($('<option selected value="' + category.id + '">' + category.name + '</option>'));
                     } else {
                         mainCategoryDropdown.append($('<option value="' + category.id + '">' + category.name + '</option>'));
@@ -95,18 +95,16 @@
         });
 
         // Load subcategories if a main category is already selected
-        var selectedMainCategory = '@ViewBag.Category';
-        var selectedSubCategory = '@Model.CategoryId';
+
 
         $.ajax({
-            url: '/Categories/GetSubCategory?mainCategoryId=' + selectedMainCategory,
+            url: '/Categories/GetSubCategory?mainCategoryId=' + @ViewBag.Kategori,
             type: 'GET',
             dataType: 'json',
             success: function (data) {
                 var subCategoryDropdown = $('#subCategory');
                 subCategoryDropdown.empty();
                 subCategoryDropdown.append('<option value="0">Select Sub Category</option>');
-
                 $.each(data.data, function (index, category) {
                     if (@Model.CategoryId == category.id) {
                         subCategoryDropdown.append($('<option selected value="' + category.id + '">' + category.name + '</option>'));

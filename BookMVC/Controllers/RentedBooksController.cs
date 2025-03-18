@@ -12,12 +12,23 @@ namespace BookMVC.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+        public IActionResult Index(int? userId)
         {
-            var rentedBooks = _context.RentedBooks.ToList();
-            var users = _context.Users.ToList();
-            var books = _context.Books.ToList();
-            return View(rentedBooks);
+            if (userId != null && userId!=0)
+            {
+                var userRentedBooks = _context.RentedBooks.Where(x => x.UserId== userId).ToList();
+                var users = _context.Users.ToList();
+                var books = _context.Books.ToList();
+                return View(userRentedBooks);
+            }
+            else
+            {
+                var rentedBooks = _context.RentedBooks.ToList();
+                var users = _context.Users.ToList();
+                var books = _context.Books.ToList();
+                return View(rentedBooks);
+            }
+      
         }
 
         public IActionResult Create()
@@ -28,6 +39,10 @@ namespace BookMVC.Controllers
         [HttpPost]
         public IActionResult Create(RentedBook model)
         {
+            if(model.User==null || model.Book == null)
+            {
+                return View(model);
+            }
             model.StartDate=DateTime.Now;
             _context.RentedBooks.Add(model);
             var book = _context.Books.Where(x => x.Id == model.BookId).FirstOrDefault();
@@ -51,6 +66,13 @@ namespace BookMVC.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
 
+        }
+
+        public IActionResult GetCountByRentedBooks()
+        {
+            var rentedBook = _context.RentedBooks.Where(x => x.EndDate == null).Count();
+
+            return Json(new {status=true, data=rentedBook});
         }
     }
 }

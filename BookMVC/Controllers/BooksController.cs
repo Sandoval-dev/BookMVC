@@ -40,9 +40,30 @@ namespace BookMVC.Controllers
 
         public IActionResult Update(int bookId)
         {
-            var book=_context.Books.Find(bookId);
+            var book = _context.Books.Find(bookId);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            book.Kategori = _context.Categories.Where(x => x.Id == book.CategoryId).FirstOrDefault();
+            if (book.Kategori == null)
+            {
+                return NotFound();
+            }
+
+            var bookCategory = book.Kategori.MainCategory;
+            var category = _context.Categories.Where(x => x.Id == bookCategory).FirstOrDefault();
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Kategori = category.Id;
+            ViewBag.SubCategory = book.CategoryId;
             return View(book);
         }
+
 
         [HttpPost]
         public IActionResult Update(Book model) 
